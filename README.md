@@ -2,11 +2,12 @@
 
 1. [Unlock (Русский)](#Инструкция-по-разблокировке-максчастоты-на-все-ядра-а-не-на-два-unlock), [Unlock (English)](#Instructions-for-unlocking-the-maximum-frequency-for-all-cores-not-two-unlock), также доступна [Видео-инструкция](#Видео-инструкция-спасибо-Zerg_fb)
 2. [Undervolting (Русский)](#Подбор-оптимальных-значений-смещения-напряжений-на-вашем-процессоре-undervolting), [Undervolting (English)](#Finding-the-optimal-voltage-offset-values-for-your-processor-undervolting)
-3. [Отключение бипера](#Отключение-бипера)
-4. [Часто задаваемые вопросы](#Часто-задаваемые-вопросы)
-5. [О пост-кодах](#О-пост-кодах)
-6. [Если вы наблюдаете частоту системной шины меньшую, чем 99,75МГц](#Если-вы-наблюдаете-частоту-системной-шины-меньшую-чем-9975МГц)
-7. [Настройка управления оборотами вентиляторов для Huananzhi X99-8M/8MD3/F8/T8/TF](#Настройка-управления-оборотами-вентиляторов-для-Huananzhi-X99-8M8MD3F8T8TF)
+3. [Unlock и Undervolting с помощью Ultimate Patcher Tool](#Ultimate-Patcher-Tool)
+4. [Отключение бипера](#Отключение-бипера)
+5. [Часто задаваемые вопросы](#Часто-задаваемые-вопросы)
+6. [О пост-кодах](#О-пост-кодах)
+7. [Если вы наблюдаете частоту системной шины меньшую, чем 99,75МГц](#Если-вы-наблюдаете-частоту-системной-шины-меньшую-чем-9975МГц)
+8. [Настройка управления оборотами вентиляторов для Huananzhi X99-8M/8MD3/F8/T8/TF](#Настройка-управления-оборотами-вентиляторов-для-Huananzhi-X99-8M8MD3F8T8TF)
 
 #### Инструкция по разблокировке макс.частоты на все ядра, а не на два (unlock)
 
@@ -167,7 +168,7 @@ If you have any difficulties, as well as if you have comments and suggestions, p
 2. В блоке "FIVR Control" отмечено "CPU Core", значит меняем смещение на ядрах
 3. В блоке "CPU Core Voltage" выбираем "Unlock Adjustable Voltage", понижаем "Offset Voltage", например, до -100mV и нажимаем Apply. Если система зависла или мы увидели синий экран, значит такое смещение нам точно не подходит, перезагружаем систему и пробуем -95mV и т.д.
 4. Если всё вроде бы стабильно, значит запускаем [OCCT](https://www.ocbase.com/), выставляем режим теста "CPU/большой набор данных/число потоков авто/набор инструкций SSE". Почему SSE, а не AVX? Потому что при AVX-нагрузке процессор переходит в другой режим работы, прибавляет напряжение и снижает частоту. Это не даст результата при тестировании стабильности работы ядер. Перед запуском теста заботимся о должном охлаждении процессора, области VRM и оперативной памяти (она может троттлить без дополнительного охлаждения).
-5. Запускаем тест. Если система зависла или мы увидели синий экран (обычно ошибка CLOCK_WATCHDOG_TIMEOUT), то уменьшаем наше смещение и продолжаем тестировать до появления стабильности (30 минут теста достаточно). Это и будет нашим значением для ядер.
+5. Запускаем тест. Если система зависла или мы увидели синий экран (обычно ошибка CLOCK_WATCHDOG_TIMEOUT), то уменьшаем наше смещение и продолжаем тестировать до появления стабильности (1 час). Это и будет нашим значением для ядер.
 
 Далее переходим к тесту кэша (начать можно с -125mV). Тестировать кэш оптимально в LinX (проверено на [v0.6.5](https://github.com/sanekgusev/LinX-old/releases/tag/0.6.5)), выставляем настройку 8192МБ памяти, нажимаем Start. При нестабильности возможен синий экран (обычно ошибка WHEA_UNCORRECTABLE_ERROR). Достаточно 5 минут теста.
 
@@ -200,11 +201,35 @@ Before proceeding, save important data on your system, be prepared for possible 
 2. In the "FIVR Control" block, "CPU Core" is marked, which means we change the offset on the cores
 3. In the "CPU Core Voltage" block, select "Unlock Adjustable Voltage", lower the "Offset Voltage", for example, to -100mV and click Apply. If the system freezes or we see a blue screen, then such an offset is definitely not suitable for us, we reboot the system and try -95mV, etc.
 4. If everything seems to be stable, then we launch the [OCCT](https://www.ocbase.com/), set the test mode "CPU/large data set/auto thread count/SSE instruction set". Why SSE and not AVX? Because under AVX load, the processor switches to another operating mode, adds voltage and decreases frequency. This will not work when testing the stability of the cores. Before running the test, we take care of proper cooling of the processor, VRM area and RAM (it can throttle without additional cooling).
-5. We run the test. If the system freezes or we see a blue screen (usually the CLOCK_WATCHDOG_TIMEOUT error), then we reduce our offset and continue testing until stability appears (30 minutes of testing is enough). This will be our core value.
+5. We run the test. If the system freezes or we see a blue screen (usually the CLOCK_WATCHDOG_TIMEOUT error), then we reduce our offset and continue testing until stability appears (1 hour). This will be our core value.
 
 Next, we move on to the cache test (you can start with -125mV). Optimally test the cache in LinX (tested on [v0.6.5](https://github.com/sanekgusev/LinX-old/releases/tag/0.6.5)), set the 8192MB memory setting, press Start. In case of instability, a blue screen is possible (usually a WHEA_UNCORRECTABLE_ERROR error). 5 minutes of the test is enough.
 
 Because to check the cache, dense data streams are needed, then it is recommended to run the test again in the future, but this time with unlock, coupled with the SVID/FIVR bug (pay special attention to the temperature during the test)
+
+#### Ultimate Patcher Tool
+
+В апреле 2021 года в свет вышла программа [Ultimate Patcher Tool](https://nalex.me/ultimate-patcher-tool/) (далее UPT) для более удобного процесса модификации биоса с целью анлока и андервольта и даже для замены логотипа. Также на некоторых биосах возможно устранение проблемы, из-за которой смартфан не работал после возвращения системы из режима сна.
+
+UPT поддерживает загрузку нужного биоса напрямую с гитхабов, также предлагает выбрать, что именно нужно модифицировать. Если не удаётся выбрать исправление смартфана, значит это пока не поддерживается для выбранного биоса. Поддерживает не только C612/X99 чипсеты, а также и другие, которые устанавливаются на платформу LGA2011-3.
+
+После модификации, биос нужно прошить любым способом (программатор, afuwin, fptw64, [S3TurboTool](https://github.com/Koshak1013/HuananzhiX99_BIOS_mods/raw/master/S3TurboTool_v1.53cat_S3THv1_DXETHv1_RAWTHv1b.rar))
+
+*ВНИМАНИЕ! На данный момент проект в стадии тестирования, поэтому не прошивайте модифицированный биос, если у вас нет возможности восстановиться с помощью программатора.*
+
+В настройках BIOS, обычно в разделе IntelRCSetup, должно быть меню "OverClocking Feature", в котором будут следующие меню:
+- Processor > Core Voltage Offset (смещение напряжения ядер в мВ, обращаем внимание на его префикс)
+- CLR/Ring > CLR Voltage Offset (смещение напряжения кэша в мВ, обращаем внимание на его префикс)
+- Uncore > Uncore Voltage Offset (смещение напряжения SystemAgent в мВ, обращаем внимание на его префикс)
+- SVID/FIVR > SVID Support (отключение равнозначно включению "Баг SVID/FIVR" в S3TT)
+
+Проверенные биосы:
+- Huananzhi X99-8M/8MD3/F8/T8/TF (25.05.2020) всё работает
+- Huananzhi X99-F8D/T8D (24.06.2020) всё работает, кроме смартфана
+- Jginyue X99M-PLUS D3 (03.11.2020) всё работает, кроме смартфана
+- Huananzhi X99-8M/8MD3/F8/T8/TF (17.08.2020) !НЕ РАБОТАЕТ!, пост-код 79
+
+Список будет пополняться, сообщайте о результатах в [Telegram группу](https://t.me/chinese_lga2011_3_x99)
 
 #### Отключение бипера
 1. Нам нужны определённые модули из биоса, чтобы их получить открываем [S3TurboTool](https://github.com/Koshak1013/HuananzhiX99_BIOS_mods/raw/master/S3TurboTool_v1.53cat_S3THv1_DXETHv1_RAWTHv1b.rar), нажимаем UEFITool и в появившейся утилите открываем биос
@@ -215,8 +240,8 @@ Because to check the cache, dense data streams are needed, then it is recommende
 ![](https://github.com/Koshak1013/HuananzhiX99_BIOS_mods/raw/master/.git_images/screen03.png)
 
 5. В S3TurboTool нажимаем Beep в верхнем правом углу
-6. Нажимаем левую кнопку для открытия файла модуля и выбираем один из модулей
-7. Нажимаем правую кнопку "Beep Off" и делаем то же самое со вторым модулем
+6. Нажимаем левый значок для открытия файла модуля и выбираем один из модулей
+7. Нажимаем правый значок "Beep Off" и делаем то же самое со вторым модулем
 8. Теперь снова открываем UEFITool (повторяем шаги 1-3 инструкции), делаем правый клик по "PE32 image section", нажимаем "Replace body...", и выбираем соответствующий модуль. Также делаем и со вторым модулем.
 9. Выбираем "File > Save image file...", сохраняем. Биос готов к прошивке. Прошить можно также соответствующей кнопкой в S3TurboTool.
 
@@ -238,30 +263,31 @@ Because to check the cache, dense data streams are needed, then it is recommende
 
 ***Ответ:*** Все прорывные исследования и реализацию новых возможностей производит ser8989 - 5366-7два80-9045-9598 (МТС Банк)
 
-На видеокарту для Кошака ^-^ - Qiwi +7-902-два13-33-10 или 4276-6900-10два6-7273 (Сбербанк)
+Кошак ^-^ - Qiwi +7-902-два13-33-10 или 4276-6900-10два6-7273 (Сбербанк)
 
-На протирку для KOT JIETA - 5469-1600-два146-9254 (Сбербанк)
+KOT JIETA - 5469-1600-два146-9254 (Сбербанк)
 
 Василий Пупкин - 5368-два902-1226-6714 (Банк ВТБ)
 
 Куратор [темы на Overclockers](https://forums.overclockers.ru/viewtopic.php?f=1&t=602922&view=unread#unread) Вадим v111 - 5167-4901-9610-два512 (Ощадбанк Украина)
+
+Костян - 4276-0два00-1999-5122 (Сбербанк)
 
 Всем большое спасибо за помощь!
 
 ---
 
 #### О пост-кодах
-* Не путайте цифру 6 с латинской B (у 6 подсвечивается верхний сегмент)
-* Не путайте цифру 3 с латинской E (они зеркально противоположны)
-* Если система после запуска сразу выключается, успев показать только FF, то это не FF, это просто начальный код запуска. Выключение происходит, например, из-за несовместимости БП.
 
 Известные решения при определённых пост-кодах:
 
-* FF, 19 - требуется прошивка биос
+* FF, 19 - требуется прошивка биос (если система после запуска сразу выключается, успев показать только FF, то это значит что система не может запустить БП, либо БП сразу уходит в защиту по какой-то причине)
 * CD - установлен V4 ES (они несовместимы)
-* B7 - пробовать один модуль памяти
+* B7 - пробовать сброс настроек биоса перемычкой
 
-Информация будет дополняться
+![](https://github.com/Koshak1013/HuananzhiX99_BIOS_mods/raw/master/.git_images/screen06.png)
+![](https://github.com/Koshak1013/HuananzhiX99_BIOS_mods/raw/master/.git_images/screen07.png)
+![](https://github.com/Koshak1013/HuananzhiX99_BIOS_mods/raw/master/.git_images/screen08.png)
 
 #### Если вы наблюдаете частоту системной шины меньшую, чем 99,75МГц
 Например, 98МГц. В таком случае вы не получите 100МГц, даже если прошьёте соответствующий биос. Насколько известно на данное время, частоту занижает активный Hyper-V в ОС.
